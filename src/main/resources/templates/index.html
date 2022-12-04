@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+        crossorigin="anonymous"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .wrap {
+            width: 300px;
+            height: auto;
+            position: relative;
+            display: inline-block;
+        }
+
+        .wrap textarea {
+            width: 100%;
+            resize: none;
+            min-height: 20.5em;
+            line-height: 1.6em;
+            max-height: 30em;
+        }
+
+        .wrap span {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        #counter {
+            background: rgba(255, 0, 0, 0.5);
+            border-radius: 0.5em;
+            padding: 0 .5em 0 .5em;
+            font-size: 0.75em;
+        }
+    </style>
+
+    <script th:inline="javascript">
+        $(function () {
+            $('#content').keyup(function (e) {
+                var content = $(this).val();
+                $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
+                $('#counter').html(content.length + '/3000');
+
+
+            });
+            $('#content').keyup(); // 처음 세팅
+        });
+
+        function checkDuplicationWord() {
+            var split = $("#content").val().split(" ");
+            const result = split.reduce((accu, curr) => {
+                accu.set(curr, (accu.get(curr) || 0) + 1);
+                return accu;
+            }, new Map());
+
+            var html = "";
+            for (let [key, value] of result.entries()) {
+                if (value > 1 && key != "") {
+                    html += "단어 : " + '<b>' + key + '</b>' + ' : ' + '<b>' + value + '</b> 회' + '<br>';
+                }
+            }
+            html += "<sub>*2회 이상 중복된 단어만 표출됩니다.</sub>";
+            $("#result").html(html);
+
+        }
+    </script>
+</head>
+<body>
+<div class="wrap">
+    <textarea th:name="text" th:id="content" th:maxlength="3000" placeholder="내용을 입력하세요."></textarea>
+    <span id="counter"></span>
+</div>
+</br>
+<button type="button" th:onclick="checkDuplicationWord()">키워드 확인</button>
+<div id="result"></div>
+</body>
+</html>
